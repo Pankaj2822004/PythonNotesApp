@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Notes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <nav>
+                <a href="/" class="logo">My Notes</a>
+                <a href="/add_note" class="add-note-btn">Add New Note</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Notes Section -->
+    <section class="notes-section">
+        <div class="container">
+            <h1 class="section-title">Your Notes</h1>
+            {% if notes %}
+            <div class="notes-grid">
+                {% for note in notes %}
+                <div class="note-card">
+                    <h2 class="note-title">{{ note.title }}</h2>
+                    <p class="note-content">{{ note.content | truncate(150) }}</p>
+                    <div class="note-actions">
+                        <button class="edit-btn" onclick="openEditModal('{{ note.title }}', '{{ note.content }}')">Edit</button>
+                        <form action="{{ url_for('delete_note') }}" method="post" class="delete-form">
+                            <input type="hidden" name="title" value="{{ note.title }}">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="no-notes-msg">You have no notes yet. Click "Add New Note" to create one!</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Note</h2>
+            <form action="{{ url_for('edit_note') }}" method="post" id="editForm">
+                <input type="hidden" name="old_title" id="editOldTitle">
+                <div class="form-group">
+                    <label for="editTitle">Title</label>
+                    <input type="text" name="title" id="editTitle" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="editContent">Content</label>
+                    <textarea name="content" id="editContent" class="form-input" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Notes App. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function openEditModal(title, content) {
+            document.getElementById('editOldTitle').value = title;
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editContent').value = content;
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+
+
